@@ -1,0 +1,11 @@
+/* Custom CSS to hide the scrollbar but keep the scrolling functionality */
+.hideScrollable::-webkit-scrollbar {
+    display: none; /* Hides scrollbar for Webkit browsers (Chrome, Safari, etc.) */
+  }
+  
+  .hideScrollable {
+    -ms-overflow-style: none; /* Hides scrollbar for IE and Edge */
+    scrollbar-width: none; /* Hides scrollbar for Firefox */
+  }
+  
+  
