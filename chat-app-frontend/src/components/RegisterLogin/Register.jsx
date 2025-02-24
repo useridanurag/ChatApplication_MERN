@@ -1,16 +1,41 @@
 import React, { useState } from 'react';
 import { useForm } from "react-hook-form";
-import { AiOutlineEye, AiOutlineEyeInvisible } from 'react-icons/ai'; // Import eye icons
+import { AiOutlineEye, AiOutlineEyeInvisible } from 'react-icons/ai';
+import axios from "axios";
 
 const Register = () => {
   const { register, handleSubmit, watch, formState: { errors, isSubmitting } } = useForm();
   const [passwordVisible, setPasswordVisible] = useState(false);  // Toggle password visibility
   const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false);  // Toggle confirm password visibility
 
-  const onSubmit = data => console.log(data);
-
   // Watch password fields to check if they match
   const password = watch("password");
+
+  // Submit Logic
+  const onSubmit = (data) => {
+    const userInfo = {
+      fullName: data.fullName,
+      email: data.email,
+      password: data.password,
+      confirmPassword: data.confirmPassword,
+    };
+    axios
+      .post("http://localhost:3000/user/register", userInfo)
+      .then((response) => {
+        if (response.data) {
+          localStorage.setItem("ChatApp", JSON.stringify(response.data));
+          console.log(response.data);
+          alert(response.data.message);
+        }
+      })
+      .catch((error) => {
+        if (error.response) {
+          console.log(error.response.data)
+          alert("Error : " + error.response.data.error);
+        }
+      });
+  };
+
 
   return (
     <div className='w-[30%] border-white border rounded-md bg-slate-900'>
@@ -64,12 +89,12 @@ const Register = () => {
               type={passwordVisible ? "text" : "password"}
               placeholder='Password'
             />
-            <button 
-              type="button" 
+            <button
+              type="button"
               onClick={() => setPasswordVisible(!passwordVisible)}
               className="absolute right-3 flex items-center justify-center"
             >
-              {passwordVisible ? <AiOutlineEyeInvisible size={20} /> : <AiOutlineEye size={20} />} {/* Eye icon */}
+              {passwordVisible ? <AiOutlineEyeInvisible size={20} /> : <AiOutlineEye size={20} />}
             </button>
           </div>
           {errors.password && <p className='text-red-600'>{errors.password.message}</p>}
@@ -85,31 +110,30 @@ const Register = () => {
               type={confirmPasswordVisible ? "text" : "password"}
               placeholder='Confirm Password'
             />
-            <button 
-              type="button" 
+            <button
+              type="button"
               onClick={() => setConfirmPasswordVisible(!confirmPasswordVisible)}
               className="absolute right-3 flex items-center justify-center"
             >
-              {confirmPasswordVisible ? <AiOutlineEyeInvisible size={20} /> : <AiOutlineEye size={20} />} {/* Eye icon */}
+              {confirmPasswordVisible ? <AiOutlineEyeInvisible size={20} /> : <AiOutlineEye size={20} />}
             </button>
           </div>
           {errors.confirmPassword && <p className='text-red-600'>{errors.confirmPassword.message}</p>}
 
           <div className='flex justify-between text-gray-300'>
-            <span>Have an account? <a href="" className='text-blue-600'>Login</a></span>
+            <span>Have an account? <a href="#" className='text-blue-600'>Login</a></span>
             <button
               type='submit'
-              value={isSubmitting ? "Submitting" : "Submit"}
               disabled={isSubmitting}
               className='bg-green-500 rounded text-lg px-1 text-white'
             >
-              Register
+              {isSubmitting ? "Submitting" : "Register"}
             </button>
           </div>
         </div>
       </form>
     </div>
-  )
+  );
 }
 
 export default Register;

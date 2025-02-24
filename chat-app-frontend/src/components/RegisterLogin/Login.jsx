@@ -1,12 +1,34 @@
 import React, { useState } from 'react';
 import { useForm } from "react-hook-form";
 import { AiOutlineEye, AiOutlineEyeInvisible } from 'react-icons/ai'; // Import eye icons
+import axios from "axios";
 
 const Login = () => {
   const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm();
   const [passwordVisible, setPasswordVisible] = useState(false);  // Toggle password visibility
 
-  const onSubmit = data => console.log(data);
+  // Submit Logic
+  const onSubmit = (data) => {
+    const userInfo = {
+      email: data.email,
+      password: data.password,
+    };
+    axios
+      .post("http://localhost:3000/user/login", userInfo)
+      .then((response) => {
+        if (response.data) {
+          localStorage.setItem("ChatApp", JSON.stringify(response.data));
+          console.log(response.data)
+          alert(response.data.message);
+        }
+      })
+      .catch((error) => {
+        if (error.response) {
+          console.log(error.response.data)
+          alert("Error : " + error.response.data.error);
+        }
+      });
+  };
 
   return (
     <div className='w-[30%] border-white border rounded-md bg-slate-900'>
@@ -42,8 +64,8 @@ const Login = () => {
               type={passwordVisible ? "text" : "password"}
               placeholder='Password'
             />
-            <button 
-              type="button" 
+            <button
+              type="button"
               onClick={() => setPasswordVisible(!passwordVisible)}
               className="absolute right-3 flex items-center justify-center"
             >
