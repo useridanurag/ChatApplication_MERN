@@ -23,7 +23,7 @@ const Register = () => {
       confirmPassword: data.confirmPassword,
     };
     await axios
-      .post("http://localhost:3000/user/register", userInfo)
+      .post("/api/user/register", userInfo)
       .then((response) => {
         if (response.data) {
           localStorage.setItem("ChatApp", JSON.stringify(response.data));
